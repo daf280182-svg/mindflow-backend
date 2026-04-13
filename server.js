@@ -13,10 +13,10 @@ app.get("/", (req, res) => {
 app.post("/analyze", (req, res) => {
   const { text } = req.body;
 
-  console.log("Texto recibido:", text);
+  console.log("REQUEST RECIBIDO:", text);
 
   res.json({
-    result: "OK: " + text
+    result: "OK backend funcionando"
   });
 });
 
