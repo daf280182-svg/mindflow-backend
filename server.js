@@ -28,7 +28,7 @@ app.post("/analyze", (req, res) => {
     }
   }
 
-  // 🔥 GUARDAR EN HISTORIAL
+  // 
   historial.push({
     text,
     result,
@@ -37,7 +37,7 @@ app.post("/analyze", (req, res) => {
 
   res.json({ result });
 });
-result }); //
+
 app.get("/historial", (req, res) => {
   res.json(historial);
 });
