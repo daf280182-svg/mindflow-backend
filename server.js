@@ -38,7 +38,8 @@ app.post("/analyze", (req, res) => {
   res.json({ result });
 });
 
-app.get("/historial", (req, res) => {
+app.get("/historial", (req, res) 
+=> {
   res.json(historial);
 });
 const PORT = process.env.PORT || 5000;
