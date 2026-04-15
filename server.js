@@ -1,3 +1,4 @@
+let historial = [];
 const express = 
 require("express");
 const cors = require("cors");
@@ -22,12 +23,24 @@ app.post("/analyze", (req, res) => {
       result = "Siento que estés triste 💙";
     } else if (texto.includes("feliz")) {
       result = "¡Qué bueno que estés feliz! 😄";
+    } else if (texto.includes("estres")) {
+      result = "Parece que estás estresado 😣";
     }
   }
 
-  res.json({ result:
-result }); //
+  // 🔥 GUARDAR EN HISTORIAL
+  historial.push({
+    text,
+    result,
+    fecha: new Date()
+  });
 
+  res.json({ result });
+});
+result }); //
+app.get("/historial", (req, res) => {
+  res.json(historial);
+});
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
