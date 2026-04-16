@@ -16,10 +16,22 @@ mongoose.model("Historial", {
 text: String,
 result: String,
 fecha: Date
+userID: String
 });
 app.post("/analyze", (req, res) => {
-  const { text } = req.body;
+  const { text, userId } = req.body;
+await Historial.create({
+text,
+result,
+fecha: new Date(),
+userId
+});
+const { userId } = req.query;
 
+const data = await
+Historial.find({ userId }).sort({
+fecha: -1 });
+res.json(data);
   let result = "No entiendo bien cómo te sentís 🤔";
 
   if (!text) {
@@ -70,6 +82,36 @@ app.get("/historial", (req, res) => {
 const data = await
 Historial.find().sort({ fecha: -1 });
 res.json(data);
+});
+const Usuario =
+mongoose.model("Usuario", {
+email: String,
+password: String
+});
+app.post("/register", async (req, res) => {
+const { email, password } = req.body;
+try {
+const user = await
+Usuario.create({ email, password });
+res.json(user);
+} catch (error) {
+res.status(500).json({ error: "Error registrando usuario" });
+}
+});
+app.post("/login", async (req, res) => {
+const { email, password } =
+req.body
+try {
+const user = await
+Usuario.findOne({ email, password });
+if (!user) {
+return
+res.status(401).json({ error: "Credenciales incorrectas" });
+}
+res.json(user);
+} catch (error) {
+res.status(500).json({ error: "Error en login" });
+}
 });
 const PORT = process.env.PORT || 5000;
 
