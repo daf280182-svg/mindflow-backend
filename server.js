@@ -69,52 +69,55 @@ userId
   res.json({ result });
 });
 
+// 📌 OBTENER HISTORIAL POR USUARIO
 app.get("/historial", async (req, res) => {
-await Historial.create({
-text,
-result,
-fecha: new Date(),
-userId
-});
-const { userId } = req.query;
+  try {
+    const { userId } = req.query;
 
-const data = await
-Historial.find({ userId }).sort({
-fecha: -1 });
-res.json(data);
-const data = await
-Historial.find().sort({ fecha: -1 });
-res.json(data);
+    const data = await Historial.find({ userId }).sort({ fecha: -1 });
+
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: "Error obteniendo historial" });
+  }
 });
-const Usuario =
-mongoose.model("Usuario", {
-email: String,
-password: String
+
+
+// 📌 MODELO DE USUARIO
+const Usuario = mongoose.model("Usuario", {
+  email: String,
+  password: String
 });
+
+
+// 📌 REGISTRO
 app.post("/register", async (req, res) => {
-const { email, password } = req.body;
-try {
-const user = await
-Usuario.create({ email, password });
-res.json(user);
-} catch (error) {
-res.status(500).json({ error: "Error registrando usuario" });
-}
+  const { email, password } = req.body;
+
+  try {
+    const user = await Usuario.create({ email, password });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Error registrando usuario" });
+  }
 });
+
+
+// 📌 LOGIN
 app.post("/login", async (req, res) => {
-const { email, password } =
-req.body
-try {
-const user = await
-Usuario.findOne({ email, password });
-if (!user) {
-return
-res.status(401).json({ error: "Credenciales incorrectas" });
-}
-res.json(user);
-} catch (error) {
-res.status(500).json({ error: "Error en login" });
-}
+  const { email, password } = req.body;
+
+  try {
+    const user = await Usuario.findOne({ email, password });
+
+    if (!user) {
+      return res.status(401).json({ error: "Credenciales incorrectas" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Error en login" });
+  }
 });
 const PORT = process.env.PORT || 5000;
 
