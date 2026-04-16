@@ -16,22 +16,12 @@ mongoose.model("Historial", {
 text: String,
 result: String,
 fecha: Date,
-userID: String
+userId: String
 });
-app.post("/analyze", (req, res) => {
-  const { text, userId } = req.body;
-await Historial.create({
-text,
-result,
-fecha: new Date(),
-userId
-});
-const { userId } = req.query;
+app.post("/analyze", async (req, res) => {
+  const { text, userId } = 
+req.body;
 
-const data = await
-Historial.find({ userId }).sort({
-fecha: -1 });
-res.json(data);
   let result = "No entiendo bien cómo te sentís 🤔";
 
   if (!text) {
@@ -73,12 +63,25 @@ res.json(data);
     text,
     result,
     fecha: new Date()
+userId
   });
 
   res.json({ result });
 });
 
-app.get("/historial", (req, res) => {
+app.get("/historial", async (req, res) => {
+await Historial.create({
+text,
+result,
+fecha: new Date(),
+userId
+});
+const { userId } = req.query;
+
+const data = await
+Historial.find({ userId }).sort({
+fecha: -1 });
+res.json(data);
 const data = await
 Historial.find().sort({ fecha: -1 });
 res.json(data);
