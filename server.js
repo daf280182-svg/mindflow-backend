@@ -15,7 +15,7 @@ const Historial =
 mongoose.model("Historial", {
 text: String,
 result: String,
-fecha: Date
+fecha: Date,
 userID: String
 });
 app.post("/analyze", (req, res) => {
