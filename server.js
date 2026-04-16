@@ -62,7 +62,7 @@ req.body;
   await Historial.create({
     text,
     result,
-    fecha: new Date()
+    fecha: new Date(),
 userId
   });
 
