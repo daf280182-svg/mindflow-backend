@@ -11,7 +11,12 @@ app.use(express.json());
 mongoose.connect("mongodb+srv://daf280182_db_user:gePHUc4keDCU7fKd@mindflow-cluster.ospmzdk.mongodb.net/?appName=mindflow-cluster")
   .then(() => console.log("MongoDB conectado"))
   .catch(err => console.log(err));
-
+const Historial =
+mongoose.model("Historial", {
+text: String,
+result: String,
+fecha: Date
+});
 app.post("/analyze", (req, res) => {
   const { text } = req.body;
 
@@ -52,7 +57,7 @@ app.post("/analyze", (req, res) => {
   }
 
   // 
-  historial.push({
+  await Historial.create({
     text,
     result,
     fecha: new Date()
@@ -62,7 +67,9 @@ app.post("/analyze", (req, res) => {
 });
 
 app.get("/historial", (req, res) => {
-res.json(historial);
+const data = await
+Historial.find().sort({ fecha: -1 });
+res.json(data);
 });
 const PORT = process.env.PORT || 5000;
 
