@@ -77,6 +77,7 @@ app.get("/historial", async (req, res) => {
     const data = await Historial.find({ userId }).sort({ fecha: -1 });
 
     res.json(data);
+});
   } catch (error) {
     res.status(500).json({ error: "Error obteniendo historial" });
   }
