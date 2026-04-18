@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-
+const bcrypt = require("bcrypt");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -91,7 +91,19 @@ app.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await Usuario.create({ email, password });
+    const existe = await Usuario.findOne({ email });
+
+    if (existe) {
+      return res.status(400).json({ error: "Usuario ya existe" });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const user = await Usuario.create({
+      email,
+      password: passwordHash
+    });
+
     const token = jwt.sign({ id: user._id }, SECRET);
 
     res.json({ token, user });
@@ -105,9 +117,15 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await Usuario.findOne({ email, password });
+    const user = await Usuario.findOne({ email });
 
     if (!user) {
+      return res.status(401).json({ error: "Credenciales incorrectas" });
+    }
+
+    const passwordCorrecta = await bcrypt.compare(password, user.password);
+
+    if (!passwordCorrecta) {
       return res.status(401).json({ error: "Credenciales incorrectas" });
     }
 
