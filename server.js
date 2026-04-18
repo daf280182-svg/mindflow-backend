@@ -4,7 +4,24 @@ const cors = require("cors");
 const mongoose =
 require("mongoose"); //
 const app = express();
+const jwt =
+require("jsonwebtoken");
+const SECRET = "mi_clave_secreta";
+const verificarToken = (req, res, next) => {
+  const token = req.headers.authorization;
 
+  if (!token) {
+    return res.status(401).json({ error: "No autorizado" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET);
+    req.userId = decoded.id;
+    next();
+  } catch {
+    res.status(401).json({ error: "Token inválido" });
+  }
+};
 app.use(cors());
 app.use(express.json());
 
@@ -18,7 +35,8 @@ result: String,
 fecha: Date,
 userId: String
 });
-app.post("/analyze", async (req, res) => {
+app.post("/analyze",
+verificarToken, async (req, res) => {
   const { text, userId } = 
 req.body;
 
@@ -26,6 +44,15 @@ req.body;
 
   if (!text) {
     result = "Escribí algo para poder ayudarte 🧠";
+await Historial.create({
+    text,
+    result,
+    fecha: new Date(),
+userId
+  });
+
+  res.json({ result });
+});
   } else {
     const texto = text.toLowerCase();
 
@@ -59,18 +86,11 @@ req.body;
   }
 
   // 
-  await Historial.create({
-    text,
-    result,
-    fecha: new Date(),
-userId
-  });
-
-  res.json({ result });
-});
+  
 
 // 📌 OBTENER HISTORIAL POR USUARIO
-app.get("/historial", async (req, res) => {
+app.get("/historial", 
+verificarToken, async (req, res) => {
   try {
     const { userId } = req.query;
 
@@ -96,7 +116,8 @@ app.post("/register", async (req, res) => {
 
   try {
     const user = await Usuario.create({ email, password });
-    res.json(user);
+const token = jwt.sing({ id: user.id }, SECRET
+    res.json({ token, user });
   } catch (error) {
     res.status(500).json({ error: "Error registrando usuario" });
   }
@@ -113,8 +134,8 @@ app.post("/login", async (req, res) => {
     if (!user) {
       return res.status(401).json({ error: "Credenciales incorrectas" });
     }
-
-    res.json(user);
+const token = jwt.sing({ id: user._id }, SECRET);
+    res.json({ token, user });
   } catch (error) {
     res.status(500).json({ error: "Error en login" });
   }
